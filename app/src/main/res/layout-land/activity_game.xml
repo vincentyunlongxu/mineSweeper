@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/background1">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/smalltitleland"/>
+    </LinearLayout>
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <TableRow
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/Timer"
+                android:text="000"
+                android:textSize="30sp"
+                android:layout_gravity="center"/>
+        </TableRow>
+        <TableRow
+            android:layout_weight="1"
+            >
+            <ImageButton android:id="@+id/Smiley"
+                android:background="@drawable/smiley_button_states"
+                android:layout_gravity="center"/>
+        </TableRow>
+        <TableRow
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/MineCount"
+                android:text="000"
+                android:layout_gravity="center"
+                android:textSize="30sp"/>
+        </TableRow>
+    </TableLayout>
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="0,2">
+        <TableRow>
+            <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/MineField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:stretchColumns="*"
+                android:layout_span="3"
+                android:padding="5dip">
+            </TableLayout>
+        </TableRow>
+    </TableLayout>
+</LinearLayout>
