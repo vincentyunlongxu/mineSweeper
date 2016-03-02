@@ -2,6 +2,8 @@ package cmpe277.lab2minesweeping;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -28,8 +30,8 @@ public class GameActivity extends Activity {
     private TextView timer;
     private TableLayout mineField;
     private Field[][] field;
-    private int fieldDimension = 30;
-    private int fieldPadding = 30;
+    private int fieldDimension = 29;
+    private int fieldPadding = 29;
     private int numOfRowInField = 12;
     private int numOfColInField = 8;
     private int totalBomb = 30;
@@ -37,6 +39,23 @@ public class GameActivity extends Activity {
     private int availableBomb;
     private boolean gameOver;
     private boolean checkBombPlant;
+    private ImageButton btn_restart;
+    private ImageButton btn_exit;
+    private boolean isRotate;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("field", field);
+        outState.putSerializable("fieldDimension", fieldDimension);
+        outState.putSerializable("fieldPadding", fieldPadding);
+        outState.putSerializable("numOfRowInField", numOfRowInField);
+        outState.putSerializable("numOfColInField", numOfColInField);
+        outState.putSerializable("totalBomb", totalBomb);
+        outState.putSerializable("availableBomb", availableBomb);
+        outState.putSerializable("gameOver", gameOver);
+        outState.putSerializable("checkBombPlant", checkBombPlant);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +63,23 @@ public class GameActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_game);
+        int orient = getResources().getConfiguration().orientation;
+        if (orient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            this.fieldDimension = 40;
+        } else {
+            this.fieldDimension = 29;
+        }
+        if (savedInstanceState != null) {
+            field = (Field[][]) savedInstanceState.getSerializable("field");
+            fieldDimension = (int) savedInstanceState.getSerializable("fieldDimension");
+            fieldPadding = (int) savedInstanceState.getSerializable("fieldPadding");
+            numOfRowInField = (int) savedInstanceState.getSerializable("numOfRowInField");
+            numOfColInField = (int) savedInstanceState.getSerializable("numOfColInField");
+            totalBomb = (int) savedInstanceState.getSerializable("totalBomb");
+            availableBomb = (int) savedInstanceState.getSerializable("availableBomb");
+            gameOver = (boolean) savedInstanceState.getSerializable("gameOver");
+            checkBombPlant = (boolean) savedInstanceState.getSerializable("checkBombPlant");
+        }
         mineCount = (TextView)findViewById(R.id.MineCount);
         timer = (TextView)findViewById(R.id.Timer);
         Typeface customFont = Typeface.createFromAsset(getAssets(), "fonts/lcd2mono.ttf");
@@ -58,20 +94,49 @@ public class GameActivity extends Activity {
             }
         });
         mineField = (TableLayout)findViewById(R.id.MineField);
-        showDialog("Click the Smile Face to Start Game", 2000, true, false);
+        btn_restart = (ImageButton)findViewById(R.id.btn_restart);
+        btn_restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endExistingGame();
+                startNewGame();
+            }
+        });
+        btn_exit = (ImageButton)findViewById(R.id.btn_exit);
+        btn_exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        if (field != null) {
+            createBoard();
+            showBoard();
+            isRotate = true;
+        } else {
+            showDialog("Click the Smile Face to Start Game", 2000, true, false);
+        }
     }
     public void startNewGame() {
+        field = new Field[numOfRowInField + 2][numOfColInField + 2];
         createBoard();
         showBoard();
         availableBomb = totalBomb;
         gameOver = false;
     }
     public void createBoard() {
-        field = new Field[numOfRowInField + 2][numOfColInField + 2];
         for (int row = 0; row < numOfRowInField + 2; row++) {
             for (int col = 0; col < numOfColInField + 2; col++) {
-                field[row][col] = new Field(this);
-                field[row][col].setDefault();
+                if (isRotate) {
+                    Field temp = field[row][col];
+                    field[row][col] = new Field(this);
+                    field[row][col].setting(temp.isInvisible(), temp.isBomb(), temp.isClickable(), temp.getNumOfMinesAround());
+                    isRotate = false;
+                } else {
+                    field[row][col] = new Field(this);
+                    field[row][col].setDefault();
+                }
                 final int curRow = row;
                 final int curCol = col;
                 field[row][col].setOnClickListener(new View.OnClickListener() {

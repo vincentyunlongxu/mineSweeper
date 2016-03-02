@@ -49,10 +49,35 @@
             android:id="@+id/MineField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
+            android:gravity="center"
             android:stretchColumns="*"
             android:layout_span="3"
             android:padding="5dip">
         </TableLayout>
+    </TableRow>
+    <TableRow
+        android:layout_gravity="bottom">
+        <LinearLayout
+            android:paddingTop="50px"
+            android:orientation="horizontal"
+            android:layout_span="3"
+            android:layout_gravity="bottom">
+            <ImageButton
+                android:id="@+id/btn_restart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_restart"
+                android:layout_marginRight="5px"
+                android:layout_weight="1"
+                android:background="@null"/>
+            <ImageButton
+                android:id="@+id/btn_exit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/button_exit_small"
+                android:layout_weight="1"
+                android:layout_marginLeft="5px"
+                android:background="@null"/>
+        </LinearLayout>
     </TableRow>
 </TableLayout>

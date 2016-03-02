@@ -3,6 +3,7 @@ package cmpe277.lab2minesweeping;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.Gravity;
 import android.widget.Button;
 
 /**
@@ -45,38 +46,47 @@ public class Field extends Button {
                 case 1:
                     this.setTextColor(Color.BLUE);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 2:
                     this.setTextColor(Color.WHITE);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 3:
                     this.setTextColor(Color.RED);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 4:
                     this.setTextColor(Color.GREEN);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 5:
                     this.setTextColor(Color.YELLOW);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 6:
                     this.setTextColor(Color.CYAN);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 7:
                     this.setTextColor(Color.BLACK);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 8:
                     this.setTextColor(Color.MAGENTA);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
                 case 9:
                     this.setTextColor(Color.LTGRAY);
                     this.setTextSize(9);
+                    this.setGravity(Gravity.CENTER);
                     break;
             }
         }
@@ -88,17 +98,21 @@ public class Field extends Button {
             this.setBackgroundResource(R.drawable.square_grey);
             this.setTextColor(Color.RED);
             this.setTextSize(9);
+            this.setGravity(Gravity.CENTER);
         } else {
             this.setTextColor(Color.BLACK);
             this.setTextSize(9);
+            this.setGravity(Gravity.CENTER);
         }
     }
 
     public void setField(boolean enabled) {
         if (!enabled) {
             this.setBackgroundResource(R.drawable.square_grey);
+            this.setGravity(Gravity.CENTER);
         } else {
             this.setBackgroundResource(R.drawable.square_blue);
+            this.setGravity(Gravity.CENTER);
         }
     }
 
@@ -150,5 +164,14 @@ public class Field extends Button {
 
     public void setClickable(boolean clickable) {
         this.isClickable = clickable;
+    }
+
+    public void setting(boolean isInvisible, boolean isBomb, boolean isClickable, int numOfMinesAround) {
+        this.isInvisible = isInvisible;
+        this.isBomb = isBomb;
+        this.isClickable = isClickable;
+        this.numOfMinesAround = numOfMinesAround;
+        //this.setBackgroundResource(R.drawable.square_blue);
+        setBoldFont();
     }
 }
