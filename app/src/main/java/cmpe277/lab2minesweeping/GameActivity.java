@@ -30,6 +30,7 @@ public class GameActivity extends Activity {
     private TextView timer;
     private TableLayout mineField;
     private Field[][] field;
+    private FieldData[][] fieldDatas;
     private int fieldDimension = 29;
     private int fieldPadding = 29;
     private int numOfRowInField = 12;
@@ -46,7 +47,7 @@ public class GameActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("field", field);
+        outState.putSerializable("fieldDatas", fieldDatas);
         outState.putSerializable("fieldDimension", fieldDimension);
         outState.putSerializable("fieldPadding", fieldPadding);
         outState.putSerializable("numOfRowInField", numOfRowInField);
@@ -70,7 +71,7 @@ public class GameActivity extends Activity {
             this.fieldDimension = 29;
         }
         if (savedInstanceState != null) {
-            field = (Field[][]) savedInstanceState.getSerializable("field");
+            fieldDatas = (FieldData[][]) savedInstanceState.getSerializable("fieldDatas");
             fieldDimension = (int) savedInstanceState.getSerializable("fieldDimension");
             fieldPadding = (int) savedInstanceState.getSerializable("fieldPadding");
             numOfRowInField = (int) savedInstanceState.getSerializable("numOfRowInField");
@@ -110,33 +111,39 @@ public class GameActivity extends Activity {
             }
         });
 
-        if (field != null) {
+        if (fieldDatas != null) {
+            isRotate = true;
             createBoard();
             showBoard();
-            isRotate = true;
+            if (gameOver) {
+                gameFinishBoard();
+            }
         } else {
             showDialog("Click the Smile Face to Start Game", 2000, true, false);
         }
     }
     public void startNewGame() {
-        field = new Field[numOfRowInField + 2][numOfColInField + 2];
+
+        fieldDatas = new FieldData[numOfRowInField + 2][numOfColInField + 2];
         createBoard();
         showBoard();
         availableBomb = totalBomb;
         gameOver = false;
     }
     public void createBoard() {
+        field = new Field[numOfRowInField + 2][numOfColInField + 2];
         for (int row = 0; row < numOfRowInField + 2; row++) {
             for (int col = 0; col < numOfColInField + 2; col++) {
-                if (isRotate) {
-                    Field temp = field[row][col];
-                    field[row][col] = new Field(this);
-                    field[row][col].setting(temp.isInvisible(), temp.isBomb(), temp.isClickable(), temp.getNumOfMinesAround());
-                    isRotate = false;
-                } else {
-                    field[row][col] = new Field(this);
-                    field[row][col].setDefault();
+
+                field[row][col] = new Field(this);
+                if (!isRotate) {
+                    fieldDatas[row][col] = new FieldData();
                 }
+                field[row][col].setData(fieldDatas[row][col]);
+                if (isRotate) {
+                    field[row][col].init();
+                }
+
                 final int curRow = row;
                 final int curCol = col;
                 field[row][col].setOnClickListener(new View.OnClickListener() {
@@ -156,6 +163,9 @@ public class GameActivity extends Activity {
                     }
                 });
             }
+        }
+        if (isRotate) {
+            isRotate = false;
         }
     }
 
@@ -284,6 +294,12 @@ public class GameActivity extends Activity {
 
     public void gameFinish(int curRow, int curCol) {
         gameOver = true;
+        gameFinishBoard();
+        field[curRow][curCol].touchBomb();
+        showDialog("Sorry, You lose this Game", 1000, false, false);
+    }
+
+    private void gameFinishBoard() {
         clickStart.setBackgroundResource(R.drawable.sad);
         for (int row = 1; row < numOfRowInField + 1; row++) {
             for (int col = 1; col < numOfColInField + 1; col++) {
@@ -293,8 +309,6 @@ public class GameActivity extends Activity {
                 }
             }
         }
-        field[curRow][curCol].touchBomb();
-        showDialog("Sorry, You lose this Game", 1000, false, false);
     }
 
     public void showDialog(String message, int milliseconds, boolean smile, boolean cool) {

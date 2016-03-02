@@ -11,23 +11,28 @@ import android.widget.Button;
  */
 public class Field extends Button {
 
-    private boolean isInvisible; // has the field been clicked
-    private boolean isBomb; // is the bomb in this field
-    private boolean isClickable; // can the field be clicked
-    private int numOfMinesAround; // number of mines around the spot
-
+    private FieldData fieldData;
     public Field(Context context) {
         super(context);
-    }
-
-    public void setDefault() {
-        isInvisible = true;
-        isBomb = false;
-        isClickable = true;
-        numOfMinesAround = 0;
-
         this.setBackgroundResource(R.drawable.square_blue);
         setBoldFont();
+    }
+
+    public void setData(FieldData fieldData) {
+        this.fieldData = fieldData;
+    }
+
+    public void init() {
+        if (fieldData.isInvisible()) {
+            return;
+        }
+        setField(false);
+        fieldData.setIsInvisible(false);
+        if (isBomb()) {
+            setBombField(false);
+        } else {
+            setNumOfMinesAroundCurrentSpot(fieldData.getNumOfMinesAround());
+        }
     }
 
     public void setBoldFont() {
@@ -121,36 +126,36 @@ public class Field extends Button {
     }
 
     public void setVisiable() {
-        if (!isInvisible) {
+        if (!fieldData.isInvisible()) {
             return;
         }
         setField(false);
-        isInvisible = false;
+        fieldData.setIsInvisible(false);
         if (isBomb()) {
             setBombField(false);
         } else {
-            setNumOfMinesAroundCurrentSpot(numOfMinesAround);
+            setNumOfMinesAroundCurrentSpot(fieldData.getNumOfMinesAround());
         }
     }
 
     public boolean isBomb() {
-        return isBomb;
+        return fieldData.isBomb();
     }
 
     public boolean isInvisible() {
-        return isInvisible;
+        return fieldData.isInvisible();
     }
 
     public void setNumOfMinesAround(int num) {
-        this.numOfMinesAround = num;
+        fieldData.setNumOfMinesAround(num);
     }
 
     public int getNumOfMinesAround() {
-        return numOfMinesAround;
+        return fieldData.getNumOfMinesAround();
     }
 
     public void plantBomb() {
-        isBomb = true;
+        fieldData.setIsBomb(true);
     }
 
     public void touchBomb() {
@@ -159,19 +164,12 @@ public class Field extends Button {
     }
 
     public boolean isClickable() {
-        return isClickable;
+        return fieldData != null ? fieldData.isClickable() : false;
     }
 
     public void setClickable(boolean clickable) {
-        this.isClickable = clickable;
-    }
-
-    public void setting(boolean isInvisible, boolean isBomb, boolean isClickable, int numOfMinesAround) {
-        this.isInvisible = isInvisible;
-        this.isBomb = isBomb;
-        this.isClickable = isClickable;
-        this.numOfMinesAround = numOfMinesAround;
-        //this.setBackgroundResource(R.drawable.square_blue);
-        setBoldFont();
+        if (fieldData != null) {
+            fieldData.setIsClickable(clickable);
+        }
     }
 }
